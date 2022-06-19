@@ -6,12 +6,14 @@ import java.util.function.Supplier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 
 import telran.monitoring.dto.PulseProbe;
 
 @SpringBootApplication
 public class PulseProbesImitatorApplication {
+private static final long TIMEOUT = 30000;
 @Value("${app.amount.patients: 10}")
 	int nPatients;
 @Value("${app.min.pulse.value: 40}")
@@ -21,8 +23,10 @@ int maxPulseValue;
 int sequenceNumber = 1;
 ThreadLocalRandom tlr = ThreadLocalRandom.current();
 
-	public static void main(String[] args) {
-		SpringApplication.run(PulseProbesImitatorApplication.class, args);
+	public static void main(String[] args) throws InterruptedException {
+		ConfigurableApplicationContext ctx = SpringApplication.run(PulseProbesImitatorApplication.class, args);
+		Thread.sleep(TIMEOUT);
+		ctx.close();
 	}
 	@Bean
 	Supplier<PulseProbe> pulseProbesSupplier() {
