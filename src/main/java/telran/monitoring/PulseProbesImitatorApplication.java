@@ -1,5 +1,6 @@
 package telran.monitoring;
 
+import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
 
@@ -20,8 +21,15 @@ private static final long TIMEOUT = 30000;
 int minPulseValue;
 @Value("${app.max.pulse.value: 240}")
 int maxPulseValue;
+@Value("${app.jump.probability: 10}")
+int jumpProb;
+@Value("${app.jump.multiple: 0.8}")
+double jumpMultiple;
+@Value("{app.delta.increase.probability: 80}")
+int deltaIncreaseProb;
 int sequenceNumber = 1;
 ThreadLocalRandom tlr = ThreadLocalRandom.current();
+HashMap<Long, Integer> patientsPulseValue = new HashMap<>();
 
 	public static void main(String[] args) throws InterruptedException {
 		ConfigurableApplicationContext ctx = SpringApplication.run(PulseProbesImitatorApplication.class, args);
@@ -33,9 +41,14 @@ ThreadLocalRandom tlr = ThreadLocalRandom.current();
 		return this::getRandomProbe;
 	}
 	PulseProbe getRandomProbe() {
-		int value = tlr.nextInt(minPulseValue, maxPulseValue + 1);
+		
 		long patientId = tlr.nextInt(1, nPatients + 1);
+		int value = getValue(patientId);
 		return new PulseProbe(sequenceNumber++, patientId  , value);
+	}
+	private int getValue(long patientId) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }
